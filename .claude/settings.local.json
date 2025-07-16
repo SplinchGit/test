@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(cp:*)",
+      "Bash(openssl rand:*)",
+      "Bash(npx auth:*)"
+    ],
+    "deny": []
+  }
+}
