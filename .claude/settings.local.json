@@ -4,7 +4,9 @@
       "Bash(test:*)",
       "Bash(cp:*)",
       "Bash(openssl rand:*)",
-      "Bash(npx auth:*)"
+      "Bash(npx auth:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }

@@ -1,6 +1,5 @@
 import { MiniKit } from '@worldcoin/minikit-js';
 import { signIn } from 'next-auth/react';
-import { getNewNonces } from './server-helpers';
 
 /**
  * Authenticates a user via their wallet using a nonce-based challenge-response mechanism.
@@ -13,7 +12,15 @@ import { getNewNonces } from './server-helpers';
  * @throws {Error} If wallet authentication fails at any step.
  */
 export const walletAuth = async () => {
-  const { nonce, signedNonce } = await getNewNonces();
+  const response = await fetch('/api/wallet-auth/nonce', {
+    method: 'POST',
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to generate nonce');
+  }
+  
+  const { nonce, signedNonce } = await response.json();
 
   const result = await MiniKit.commandsAsync.walletAuth({
     nonce,
