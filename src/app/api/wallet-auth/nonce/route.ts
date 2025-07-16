@@ -21,7 +21,14 @@ async function getHmacSecret(): Promise<string> {
       throw new Error('Secret value is empty');
     }
     
-    cachedSecret = response.SecretString;
+    // Parse the JSON to get the actual key value
+    const secretData = JSON.parse(response.SecretString);
+    cachedSecret = secretData.HMAC_SECRET_KEY;
+    
+    if (!cachedSecret) {
+      throw new Error('HMAC_SECRET_KEY not found in secret');
+    }
+    
     return cachedSecret;
   } catch (error) {
     console.error('Failed to retrieve secret from AWS:', error);
