@@ -31,7 +31,7 @@ export const AuthButton = () => {
 
   useEffect(() => {
     const authenticate = async () => {
-      if (isInstalled && !isPending) {
+      if (isInstalled) {
         setIsPending(true);
         try {
           await walletAuth();
@@ -44,7 +44,7 @@ export const AuthButton = () => {
     };
 
     authenticate();
-  }, [isInstalled, isPending]);
+  }, [isInstalled]);
 
   return (
     <LiveFeedback
