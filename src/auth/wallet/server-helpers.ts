@@ -1,14 +1,22 @@
 'use server';
 import crypto from 'crypto';
-import { hashNonce } from './client-helpers';
-/**
- * Generates a new random nonce and its corresponding HMAC signature.
- * @async
- * @returns {Promise<{ nonce: string, signedNonce: string }>} An object containing the nonce and its signed (hashed) value.
- */
+
+// Move the hashNonce function here
+export const hashNonce = ({ nonce }: { nonce: string }) => {
+  const HMAC_SECRET_KEY = process.env.HMAC_SECRET_KEY;
+  
+  if (!HMAC_SECRET_KEY) {
+    throw new Error('HMAC_SECRET_KEY not found in environment variables');
+  }
+  
+  const hmac = crypto.createHmac('sha256', HMAC_SECRET_KEY);
+  hmac.update(nonce);
+  return hmac.digest('hex');
+};
+
 export const getNewNonces = async () => {
   const nonce = crypto.randomUUID().replace(/-/g, '');
-  const signedNonce = hashNonce({ nonce });
+  const signedNonce = hashNonce({ nonce }); // Fix the function call
   return {
     nonce,
     signedNonce,

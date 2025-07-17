@@ -1,4 +1,4 @@
-import { hashNonce } from '@/auth/wallet/client-helpers';
+import { hashNonce } from '@/auth/wallet/server-helpers';
 import {
   MiniAppWalletAuthSuccessPayload,
   MiniKit,

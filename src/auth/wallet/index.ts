@@ -13,7 +13,7 @@ import { signIn } from 'next-auth/react';
  */
 export const walletAuth = async () => {
   const response = await fetch('/api/wallet-auth/nonce', {
-    method: 'POST',
+    method: 'GET',  // Changed from POST to GET
   });
   
   if (!response.ok) {
