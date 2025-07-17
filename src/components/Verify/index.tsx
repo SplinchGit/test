@@ -14,16 +14,11 @@ export const Verify = () => {
     'pending' | 'success' | 'failed' | undefined
   >(undefined);
 
-  const [whichVerification, setWhichVerification] = useState<VerificationLevel>(
-    VerificationLevel.Device,
-  );
-
-  const onClickVerify = async (verificationLevel: VerificationLevel) => {
+  const onClickVerify = async () => {
     setButtonState('pending');
-    setWhichVerification(verificationLevel);
     const result = await MiniKit.commandsAsync.verify({
       action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
-      verification_level: verificationLevel,
+      verification_level: VerificationLevel.Device,
     });
     console.log(result.finalPayload);
     // Verify the proof
@@ -58,49 +53,24 @@ export const Verify = () => {
 
   return (
     <div className="grid w-full gap-4">
-      <p className="text-lg font-semibold">Verify</p>
+      <p className="text-lg font-semibold">Verify with World ID</p>
       <LiveFeedback
         label={{
           failed: 'Failed to verify',
           pending: 'Verifying',
           success: 'Verified',
         }}
-        state={
-          whichVerification === VerificationLevel.Device
-            ? buttonState
-            : undefined
-        }
+        state={buttonState}
         className="w-full"
       >
         <Button
-          onClick={() => onClickVerify(VerificationLevel.Device)}
-          disabled={buttonState === 'pending'}
-          size="lg"
-          variant="tertiary"
-          className="w-full"
-        >
-          Verify (Device)
-        </Button>
-      </LiveFeedback>
-      <LiveFeedback
-        label={{
-          failed: 'Failed to verify',
-          pending: 'Verifying',
-          success: 'Verified',
-        }}
-        state={
-          whichVerification === VerificationLevel.Orb ? buttonState : undefined
-        }
-        className="w-full"
-      >
-        <Button
-          onClick={() => onClickVerify(VerificationLevel.Orb)}
+          onClick={onClickVerify}
           disabled={buttonState === 'pending'}
           size="lg"
           variant="primary"
           className="w-full"
         >
-          Verify (Orb)
+          Verify with World ID
         </Button>
       </LiveFeedback>
     </div>

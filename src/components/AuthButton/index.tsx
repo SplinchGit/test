@@ -1,41 +1,63 @@
 'use client';
-import { walletAuth } from '@/auth/wallet';
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
-import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
+import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import { useCallback, useState } from 'react';
 
 /**
- * This component is an example of how to authenticate a user
- * We will use Next Auth for this example, but you can use any auth provider
- * Read More: https://docs.world.org/mini-apps/commands/wallet-auth
+ * This component uses World ID verification for authentication
+ * It will show the World ID popup for sign-in
+ * Read More: https://docs.world.org/mini-apps/commands/verify
  */
 export const AuthButton = () => {
   const [isPending, setIsPending] = useState(false);
-  const { isInstalled } = useMiniKit();
 
   const onClick = useCallback(async () => {
-    if (!isInstalled || isPending) {
+    if (isPending) {
       return;
     }
     setIsPending(true);
+    
     try {
-      await walletAuth();
+      const result = await MiniKit.commandsAsync.verify({
+        action: 'test-action',
+        verification_level: VerificationLevel.Device,
+      });
+      
+      console.log(result.finalPayload);
+      
+      // Verify the proof on the server
+      const response = await fetch('/api/verify-proof', {
+        method: 'POST',
+        body: JSON.stringify({
+          payload: result.finalPayload,
+          action: 'test-action',
+        }),
+      });
+
+      const data = await response.json();
+      if (data.verifyRes.success) {
+        // Store verification status
+        localStorage.setItem('worldid_verified', 'true');
+        localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+        
+        // Redirect to game setup
+        window.location.href = '/game-setup';
+      } else {
+        console.error('Verification failed');
+        setIsPending(false);
+      }
     } catch (error) {
-      console.error('Wallet authentication button error', error);
+      console.error('World ID verification error', error);
       setIsPending(false);
-      return;
     }
-
-    setIsPending(false);
-  }, [isInstalled, isPending]);
-
+  }, [isPending]);
 
   return (
     <LiveFeedback
       label={{
-        failed: 'Failed to login',
-        pending: 'Logging in',
-        success: 'Logged in',
+        failed: 'Failed to verify',
+        pending: 'Verifying with World ID',
+        success: 'Verified',
       }}
       state={isPending ? 'pending' : undefined}
     >
@@ -45,7 +67,7 @@ export const AuthButton = () => {
         size="lg"
         variant="primary"
       >
-        Login with Wallet
+        Sign in with World ID
       </Button>
     </LiveFeedback>
   );
