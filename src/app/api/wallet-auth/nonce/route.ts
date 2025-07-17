@@ -10,6 +10,8 @@ async function getHmacSecret(): Promise<string> {
   if (cachedSecret) return cachedSecret;
   
   try {
+    // First, try to get from AWS Secrets Manager
+    console.log('Attempting to retrieve secret from AWS Secrets Manager...');
     const client = new SecretsManagerClient({ region: "eu-west-2" });
     const response = await client.send(
       new GetSecretValueCommand({ 
@@ -29,10 +31,21 @@ async function getHmacSecret(): Promise<string> {
       throw new Error('HMAC_SECRET_KEY not found in secret');
     }
     
+    console.log('Successfully retrieved secret from AWS Secrets Manager');
     return cachedSecret;
-  } catch (error) {
-    console.error('Failed to retrieve secret from AWS:', error);
-    throw new Error('Failed to retrieve secret');
+  } catch (awsError) {
+    console.warn('Failed to retrieve secret from AWS:', awsError);
+    console.log('Falling back to environment variable...');
+    
+    // Fallback to environment variable
+    const envSecret = process.env.HMAC_SECRET_KEY;
+    if (!envSecret) {
+      throw new Error('HMAC_SECRET_KEY not found in AWS Secrets Manager or environment variables');
+    }
+    
+    cachedSecret = envSecret;
+    console.log('Using HMAC secret from environment variable');
+    return cachedSecret;
   }
 }
 
@@ -44,7 +57,7 @@ const hashNonce = (nonce: string, secret: string): string => {
 
 export async function GET() {
   try {
-    // Get secret from AWS Secrets Manager
+    // Get secret using hybrid approach
     const HMAC_SECRET_KEY = await getHmacSecret();
     
     // Generate nonce
