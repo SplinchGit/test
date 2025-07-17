@@ -2,10 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
 import { validateUsername } from '@/utils/validation';
+import type { Player } from '@/types/game';
 
 interface ChooseUsernameProps {
   walletAddress: string;
-  onUsernameSelected: (player: any, token: string) => void;
+  onUsernameSelected: (player: Player, token: string) => void;
   onBack: () => void;
 }
 
@@ -49,7 +50,7 @@ export const ChooseUsername = ({ walletAddress, onUsernameSelected, onBack }: Ch
         setError(data.error || 'Failed to check username availability');
         setIsAvailable(null);
       }
-    } catch (error) {
+    } catch {
       setError('Failed to check username availability');
       setIsAvailable(null);
     } finally {
@@ -101,7 +102,7 @@ export const ChooseUsername = ({ walletAddress, onUsernameSelected, onBack }: Ch
       } else {
         setError(data.error || 'Failed to create account');
       }
-    } catch (error) {
+    } catch {
       setError('Failed to create account');
     } finally {
       setIsCreating(false);

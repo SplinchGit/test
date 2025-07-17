@@ -53,7 +53,7 @@ export const sanitizeInput = {
     return sanitized;
   },
 
-  numeric: (input: any, fieldName: string): number => {
+  numeric: (input: unknown, fieldName: string): number => {
     const num = Number(input);
     
     if (isNaN(num) || !isFinite(num)) {
@@ -63,7 +63,7 @@ export const sanitizeInput = {
     return num;
   },
 
-  positiveInteger: (input: any, fieldName: string): number => {
+  positiveInteger: (input: unknown, fieldName: string): number => {
     const num = sanitizeInput.numeric(input, fieldName);
     
     if (!Number.isInteger(num) || num < 0) {
@@ -73,7 +73,7 @@ export const sanitizeInput = {
     return num;
   },
 
-  string: (input: any, fieldName: string, maxLength: number = 1000): string => {
+  string: (input: unknown, fieldName: string, maxLength: number = 1000): string => {
     if (typeof input !== 'string') {
       throw new ValidationError(`${fieldName} must be a string`);
     }

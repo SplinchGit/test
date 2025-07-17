@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChooseUsername } from '@/components/ChooseUsername';
 import { Page } from '@/components/PageLayout';
 import { useGameStore } from '@/store/gameStore';
+import type { Player } from '@/types/game';
 
 export default function GameSetup() {
   const { data: session, status } = useSession();
@@ -51,7 +52,7 @@ export default function GameSetup() {
     initializeGame();
   }, [session, status, router, setPlayer]);
 
-  const handleUsernameSelected = (player: any, token: string) => {
+  const handleUsernameSelected = (player: Player, token: string) => {
     // Store auth token and player data
     localStorage.setItem('auth_token', token);
     setPlayer(player);

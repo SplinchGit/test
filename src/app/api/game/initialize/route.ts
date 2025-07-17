@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { sanitizeInput, validateUsername, ValidationError } from '@/utils/validation';
+import type { PlayerCar } from '@/types/game';
 
 // Mock database - replace with your actual database
 interface Player {
@@ -11,7 +12,7 @@ interface Player {
   respect: number;
   rank: number;
   city: number;
-  cars: any[];
+  cars: PlayerCar[];
   lastActive: string;
   createdAt: string;
   bullets: number;
