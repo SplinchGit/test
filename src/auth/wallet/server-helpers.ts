@@ -1,8 +1,8 @@
 'use server';
 import crypto from 'crypto';
 
-// Move the hashNonce function here
-export const hashNonce = ({ nonce }: { nonce: string }) => {
+// Move the hashNonce function here - MUST be async with 'use server'
+export const hashNonce = async ({ nonce }: { nonce: string }) => {
   const HMAC_SECRET_KEY = process.env.HMAC_SECRET_KEY;
   
   if (!HMAC_SECRET_KEY) {
@@ -16,7 +16,7 @@ export const hashNonce = ({ nonce }: { nonce: string }) => {
 
 export const getNewNonces = async () => {
   const nonce = crypto.randomUUID().replace(/-/g, '');
-  const signedNonce = hashNonce({ nonce }); // Fix the function call
+  const signedNonce = await hashNonce({ nonce }); // Now await since it's async
   return {
     nonce,
     signedNonce,
