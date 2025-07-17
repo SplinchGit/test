@@ -1,8 +1,8 @@
 {
-  "name": "@worldcoin/next-15-template",
-  "version": "0.1.0",
-  "homepage": "https://docs.worldcoin.org/mini-apps",
-  "description": "Create a Mini App",
+  "name": "mafioso-game",
+  "version": "1.0.0",
+  "homepage": "https://github.com/your-username/mafioso-game",
+  "description": "Mafioso - A criminal empire building game on World Chain",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -23,7 +23,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.2.0",
-    "viem": "2.23.5"
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
