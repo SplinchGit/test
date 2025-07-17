@@ -9,16 +9,18 @@ import Credentials from 'next-auth/providers/credentials';
 
 declare module 'next-auth' {
   interface User {
-    walletAddress: string;
-    username: string;
-    profilePictureUrl: string;
+    walletAddress?: string;
+    username?: string;
+    profilePictureUrl?: string;
+    nullifierHash?: string;
   }
 
   interface Session {
     user: {
-      walletAddress: string;
-      username: string;
-      profilePictureUrl: string;
+      walletAddress?: string;
+      username?: string;
+      profilePictureUrl?: string;
+      nullifierHash?: string;
     } & DefaultSession['user'];
   }
 }
@@ -72,6 +74,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
+    Credentials({
+      name: 'World ID',
+      credentials: {
+        nullifierHash: { label: 'Nullifier Hash', type: 'text' },
+      },
+      // @ts-expect-error TODO
+      authorize: async ({
+        nullifierHash,
+      }: {
+        nullifierHash: string;
+      }) => {
+        // For World ID, we just need the nullifier hash as proof of verification
+        return {
+          id: nullifierHash,
+          nullifierHash,
+        };
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -80,6 +100,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.walletAddress = user.walletAddress;
         token.username = user.username;
         token.profilePictureUrl = user.profilePictureUrl;
+        token.nullifierHash = user.nullifierHash;
       }
 
       return token;
@@ -87,9 +108,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: async ({ session, token }) => {
       if (token.userId) {
         session.user.id = token.userId as string;
-        session.user.walletAddress = token.address as string;
+        session.user.walletAddress = token.walletAddress as string;
         session.user.username = token.username as string;
         session.user.profilePictureUrl = token.profilePictureUrl as string;
+        session.user.nullifierHash = token.nullifierHash as string;
       }
 
       return session;

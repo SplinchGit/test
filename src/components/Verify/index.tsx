@@ -2,6 +2,7 @@
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
 import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 
 /**
  * This component is an example of how to use World ID in Mini Apps
@@ -17,7 +18,7 @@ export const Verify = () => {
   const onClickVerify = async () => {
     setButtonState('pending');
     const result = await MiniKit.commandsAsync.verify({
-      action: 'test-action', // Make sure to create this in the developer portal -> incognito actions
+      action: 'verify',
       verification_level: VerificationLevel.Device,
     });
     console.log(result.finalPayload);
@@ -26,21 +27,19 @@ export const Verify = () => {
       method: 'POST',
       body: JSON.stringify({
         payload: result.finalPayload,
-        action: 'test-action',
+        action: 'verify',
       }),
     });
 
     const data = await response.json();
     if (data.verifyRes.success) {
       setButtonState('success');
-      // Store verification status
-      localStorage.setItem('worldid_verified', 'true');
-      localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
       
-      // Redirect to game setup after a short delay to show success
-      setTimeout(() => {
-        window.location.href = '/game-setup';
-      }, 1500);
+      // Sign in with NextAuth using the nullifier hash
+      await signIn('credentials', {
+        nullifierHash: data.verifyRes.nullifier_hash,
+        redirectTo: '/dashboard',
+      });
     } else {
       setButtonState('failed');
 
