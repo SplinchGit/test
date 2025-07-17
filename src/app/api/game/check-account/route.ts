@@ -3,9 +3,7 @@ import type { Player } from '@/types/game';
 
 // Import the mock storage from initialize route - in production, use shared database access
 // For now, we'll use a global store that both endpoints can access
-declare global {
-  var mockPlayers: Map<string, Player> | undefined;
-}
+// Global types are declared in @/types/global.d.ts
 
 if (!global.mockPlayers) {
   global.mockPlayers = new Map<string, Player>();

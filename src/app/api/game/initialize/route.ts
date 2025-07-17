@@ -32,11 +32,7 @@ interface Player {
 }
 
 // Mock storage - replace with actual database
-// Use global storage that can be shared between endpoints
-declare global {
-  var mockPlayers: Map<string, Player> | undefined;
-  var mockUsernames: Set<string> | undefined;
-}
+// Global types are now declared in @/types/global.d.ts
 
 if (!global.mockPlayers) {
   global.mockPlayers = new Map<string, Player>();
