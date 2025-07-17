@@ -29,22 +29,6 @@ export const AuthButton = () => {
     setIsPending(false);
   }, [isInstalled, isPending]);
 
-  useEffect(() => {
-    const authenticate = async () => {
-      if (isInstalled) {
-        setIsPending(true);
-        try {
-          await walletAuth();
-        } catch (error) {
-          console.error('Auto wallet authentication error', error);
-        } finally {
-          setIsPending(false);
-        }
-      }
-    };
-
-    authenticate();
-  }, [isInstalled]);
 
   return (
     <LiveFeedback
