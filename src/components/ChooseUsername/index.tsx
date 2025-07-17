@@ -5,7 +5,7 @@ import { validateUsername } from '@/utils/validation';
 import type { Player } from '@/types/game';
 
 interface ChooseUsernameProps {
-  walletAddress: string;
+  walletAddress: string; // This will be the nullifier hash for WorldID users
   onUsernameSelected: (player: Player, token: string) => void;
   onBack: () => void;
 }
@@ -92,6 +92,7 @@ export const ChooseUsername = ({ walletAddress, onUsernameSelected, onBack }: Ch
         },
         body: JSON.stringify({
           username,
+          nullifierHash: walletAddress, // Using walletAddress prop as nullifier hash
         }),
       });
 
@@ -109,7 +110,9 @@ export const ChooseUsername = ({ walletAddress, onUsernameSelected, onBack }: Ch
     }
   };
 
-  const truncatedAddress = `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`;
+  const truncatedAddress = walletAddress.startsWith('0x') 
+    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+    : `${walletAddress.slice(0, 8)}...${walletAddress.slice(-6)}`; // For nullifier hash
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-900">
@@ -119,7 +122,7 @@ export const ChooseUsername = ({ walletAddress, onUsernameSelected, onBack }: Ch
             🎭 Welcome to MAFIOSO
           </h1>
           <p className="text-gray-400 text-sm">
-            Connected: <span className="text-yellow-400">{truncatedAddress}</span>
+            Verified ID: <span className="text-yellow-400">{truncatedAddress}</span>
           </p>
         </div>
 

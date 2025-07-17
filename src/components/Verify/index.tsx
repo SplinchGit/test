@@ -38,8 +38,14 @@ export const Verify = () => {
     const data = await response.json();
     if (data.verifyRes.success) {
       setButtonState('success');
-      // Normally you'd do something here since the user is verified
-      // Here we'll just do nothing
+      // Store verification status
+      localStorage.setItem('worldid_verified', 'true');
+      localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+      
+      // Redirect to game setup after a short delay to show success
+      setTimeout(() => {
+        window.location.href = '/game-setup';
+      }, 1500);
     } else {
       setButtonState('failed');
 

@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { ChooseUsername } from '@/components/ChooseUsername';
 import { Page } from '@/components/PageLayout';
@@ -8,28 +7,42 @@ import { useGameStore } from '@/store/gameStore';
 import type { Player } from '@/types/game';
 
 export default function GameSetup() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const { setPlayer } = useGameStore();
   const [isLoading, setIsLoading] = useState(true);
   const [needsUsername, setNeedsUsername] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nullifierHash, setNullifierHash] = useState<string>('');
 
   useEffect(() => {
     const initializeGame = async () => {
-      if (status === 'loading') return;
+      // Check if user has verified with WorldID
+      const isVerified = localStorage.getItem('worldid_verified');
+      const storedNullifier = localStorage.getItem('worldid_nullifier');
       
-      if (!session?.user?.walletAddress) {
+      if (!isVerified || !storedNullifier) {
         router.push('/');
         return;
       }
 
+      setNullifierHash(storedNullifier);
+
       try {
-        const response = await fetch('/api/game/initialize');
+        // Check if user already has an account using the nullifier hash
+        const response = await fetch('/api/game/check-account', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            nullifierHash: storedNullifier,
+          }),
+        });
+
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to initialize game');
+          throw new Error(data.error || 'Failed to check account status');
         }
 
         if (data.hasAccount) {
@@ -50,7 +63,7 @@ export default function GameSetup() {
     };
 
     initializeGame();
-  }, [session, status, router, setPlayer]);
+  }, [router, setPlayer]);
 
   const handleUsernameSelected = (player: Player, token: string) => {
     // Store auth token and player data
@@ -62,10 +75,13 @@ export default function GameSetup() {
   };
 
   const handleBack = () => {
+    // Clear WorldID verification status
+    localStorage.removeItem('worldid_verified');
+    localStorage.removeItem('worldid_nullifier');
     router.push('/');
   };
 
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
       <Page>
         <Page.Main className="flex flex-col items-center justify-center">
@@ -97,10 +113,10 @@ export default function GameSetup() {
     );
   }
 
-  if (needsUsername && session?.user?.walletAddress) {
+  if (needsUsername) {
     return (
       <ChooseUsername
-        walletAddress={session.user.walletAddress}
+        walletAddress={nullifierHash} // Using nullifier hash as unique identifier
         onUsernameSelected={handleUsernameSelected}
         onBack={handleBack}
       />

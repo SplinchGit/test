@@ -32,8 +32,22 @@ interface Player {
 }
 
 // Mock storage - replace with actual database
-const mockPlayers = new Map<string, Player>();
-const mockUsernames = new Set<string>();
+// Use global storage that can be shared between endpoints
+declare global {
+  var mockPlayers: Map<string, Player> | undefined;
+  var mockUsernames: Set<string> | undefined;
+}
+
+if (!global.mockPlayers) {
+  global.mockPlayers = new Map<string, Player>();
+}
+
+if (!global.mockUsernames) {
+  global.mockUsernames = new Set<string>();
+}
+
+const mockPlayers = global.mockPlayers;
+const mockUsernames = global.mockUsernames;
 
 const GAME_CONFIG = {
   STARTING_MONEY: 1000,
@@ -153,27 +167,18 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    
-    if (!session?.user?.walletAddress) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { username } = body;
+    const { username, nullifierHash } = body;
 
-    if (!username) {
+    if (!username || !nullifierHash) {
       return NextResponse.json(
-        { error: 'Username is required' },
+        { error: 'Username and nullifier hash are required' },
         { status: 400 }
       );
     }
 
     // Sanitize and validate inputs
-    const sanitizedWallet = sanitizeInput.walletAddress(session.user.walletAddress);
+    const sanitizedNullifier = nullifierHash; // Nullifier hash is already a hash, no need for wallet sanitization
     const sanitizedUsername = sanitizeInput.username(username);
     
     const usernameValidation = validateUsername(sanitizedUsername);
@@ -185,10 +190,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if player already exists
-    const existingPlayer = await getExistingPlayer(sanitizedWallet);
+    const existingPlayer = await getExistingPlayer(sanitizedNullifier);
     if (existingPlayer) {
       return NextResponse.json(
-        { error: 'Account already exists for this wallet' },
+        { error: 'Account already exists for this ID' },
         { status: 409 }
       );
     }
@@ -202,8 +207,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new player
-    const player = await createPlayer(sanitizedWallet, sanitizedUsername);
+    // Create new player using nullifier hash as identifier
+    const player = await createPlayer(sanitizedNullifier, sanitizedUsername);
     const token = generateAuthToken(player);
 
     return NextResponse.json({
