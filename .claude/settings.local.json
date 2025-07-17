@@ -9,7 +9,8 @@
       "Bash(npm run lint)",
       "Bash(ls:*)",
       "Bash(npm install:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
