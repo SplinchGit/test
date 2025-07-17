@@ -14,8 +14,8 @@ export default function Dashboard() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Access Denied</h1>
           <p className="text-gray-400 mb-6">You need to be logged in to access the game.</p>
-          <Link href="/" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
-            Go to Login
+          <Link href="/game-setup" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
+            Set Up Game Account
           </Link>
         </div>
       </div>

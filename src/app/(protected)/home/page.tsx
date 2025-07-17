@@ -26,7 +26,7 @@ export default async function Home() {
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
         <div className="w-full max-w-md">
           <Link 
-            href="/dashboard" 
+            href="/game-setup" 
             className="block w-full bg-red-600 hover:bg-red-700 text-white text-center py-4 px-6 rounded-lg font-semibold text-lg transition-colors mb-6"
           >
             🎭 Enter Mafioso Game

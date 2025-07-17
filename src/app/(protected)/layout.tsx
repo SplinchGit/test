@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
+import { redirect } from 'next/navigation';
 
 export default async function TabsLayout({
   children,
@@ -10,8 +11,7 @@ export default async function TabsLayout({
 
   // If the user is not authenticated, redirect to the login page
   if (!session) {
-    console.log('Not authenticated');
-    // redirect('/');
+    redirect('/');
   }
 
   return (
