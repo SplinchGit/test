@@ -16,8 +16,8 @@ export const AuthButton = () => {
     const nullifierHash = typeof window !== 'undefined' ? localStorage.getItem('worldid_nullifier') : null;
     
     if (isVerified === 'true' && nullifierHash) {
-      // Already verified, redirect to dashboard
-      router.push('/dashboard');
+      // Already verified, redirect to game setup to check account
+      router.push('/game-setup');
     }
   }, [router]);
 
@@ -91,9 +91,9 @@ export const AuthButton = () => {
         // 6. Show success state briefly
         setVerificationState('success');
         
-        // 7. Redirect to dashboard after 1 second
+        // 7. Redirect to game setup after 1 second
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/game-setup');
         }, 1000);
       } else {
         // Verification failed
