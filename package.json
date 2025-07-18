@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/load-secrets.js && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -26,6 +26,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.848.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
