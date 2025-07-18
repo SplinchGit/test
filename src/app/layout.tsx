@@ -27,7 +27,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} `}>
-        <ClientProviders>{children}</ClientProviders>
+        <div style={{ width: '100%', height: '100vh', background: 'var(--background)' }}>
+          <ClientProviders>{children}</ClientProviders>
+        </div>
       </body>
     </html>
   );

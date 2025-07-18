@@ -8,7 +8,14 @@ export default function MiniKitProvider({ children }: { children: ReactNode }) {
     // Install MiniKit - this is what makes MiniKit.isInstalled() return true
     MiniKit.install();
     
-    console.log('MiniKit installed:', MiniKit.isInstalled());
+    // Wait a bit to ensure installation is complete
+    setTimeout(() => {
+      if (MiniKit.isInstalled()) {
+        console.log('MiniKit installed successfully');
+      } else {
+        console.warn('MiniKit installation failed');
+      }
+    }, 100);
   }, []);
 
   return <>{children}</>;
