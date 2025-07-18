@@ -1,11 +1,9 @@
 const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
-const fs = require('fs');
-const path = require('path');
 
 async function loadSecrets() {
   // Skip in local development
   if (!process.env.Mafioso_Secret) {
-    console.log('Using local .env.local file');
+    console.log('📍 Using local .env.local file');
     return;
   }
 
@@ -22,16 +20,16 @@ async function loadSecrets() {
 
     const secrets = JSON.parse(response.SecretString);
     
-    // Create env string
-    const envContent = Object.entries(secrets)
-      .map(([key, value]) => `${key}="${value}"`)
-      .join('\n');
-
-    fs.writeFileSync('.env.production.local', envContent);
-    console.log('✅ Secrets loaded from AWS!');
+    // Only load HMAC_SECRET_KEY from Secrets Manager
+    // AUTH_SECRET comes from Amplify env vars
+    if (secrets.HMAC_SECRET_KEY) {
+      process.env.HMAC_SECRET_KEY = secrets.HMAC_SECRET_KEY;
+      console.log('✅ HMAC_SECRET_KEY loaded from AWS Secrets Manager');
+    }
     
   } catch (error) {
-    console.error('Failed to load secrets:', error.message);
+    console.error('❌ Failed to load secrets:', error.message);
+    // Don't fail the build - use Amplify env vars as fallback
   }
 }
 
