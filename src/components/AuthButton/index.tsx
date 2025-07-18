@@ -57,7 +57,7 @@ export const AuthButton = () => {
       const data = await response.json();
       console.log('Server verification response:', data);
       
-      if (data.verifyRes.success) {
+      if (data.verifyRes && data.verifyRes.success) {
         // 4. Store verification status
         localStorage.setItem('worldid_verified', 'true');
         localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
@@ -71,7 +71,7 @@ export const AuthButton = () => {
         }, 1000);
       } else {
         // Verification failed
-        console.error('Server verification failed:', data.verifyRes);
+        console.error('Server verification failed:', data.verifyRes || data);
         setVerificationState('failed');
         setTimeout(() => setVerificationState('idle'), 3000);
       }
