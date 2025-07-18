@@ -21,14 +21,30 @@ export async function POST(req: NextRequest) {
     const { payload, action, signal } = (await req.json()) as IRequestPayload;
     const app_id = process.env.WORLD_APP_ID as `app_${string}`;
 
-    console.log('Verifying proof with app_id:', app_id);
+    console.log('Environment check:');
+    console.log('- WORLD_APP_ID exists:', !!process.env.WORLD_APP_ID);
+    console.log('- App ID value:', app_id?.substring(0, 10) + '...' || 'undefined');
     console.log('Action:', action);
     console.log('Has payload:', !!payload);
 
     if (!app_id) {
-      console.error('WORLD_APP_ID not configured');
+      console.error('WORLD_APP_ID environment variable not configured');
+      console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('WORLD')));
       return NextResponse.json({ 
-        verifyRes: { success: false, detail: 'Server configuration error' } 
+        verifyRes: { 
+          success: false, 
+          detail: 'Server configuration error: WORLD_APP_ID not found in environment variables' 
+        } 
+      }, { status: 500 });
+    }
+
+    if (!app_id.startsWith('app_')) {
+      console.error('Invalid WORLD_APP_ID format. Expected format: app_xxxxx');
+      return NextResponse.json({ 
+        verifyRes: { 
+          success: false, 
+          detail: 'Server configuration error: Invalid WORLD_APP_ID format' 
+        } 
       }, { status: 500 });
     }
 
