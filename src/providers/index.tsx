@@ -1,16 +1,18 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
+import MiniKitProvider from './MiniKitProvider';
 
 const ErudaProvider = (props: { children: ReactNode }) => {
   useEffect(() => {
-    // Just show Eruda. Period.
-    import('eruda').then((eruda) => {
-      eruda.default.init();
-      console.log('Eruda initialized - check for the floating button!');
-    }).catch(error => {
-      console.error('Eruda failed to load:', error);
-    });
+    if (typeof window !== 'undefined') {
+      import('eruda').then((eruda) => {
+        eruda.default.init();
+        console.log('Eruda initialized!');
+      }).catch(error => {
+        console.error('Eruda failed to load:', error);
+      });
+    }
   }, []);
 
   return <>{props.children}</>;
@@ -22,8 +24,10 @@ interface ClientProvidersProps {
 
 export default function ClientProviders({ children }: ClientProvidersProps) {
   return (
-    <ErudaProvider>
-      {children}
-    </ErudaProvider>
+    <MiniKitProvider>
+      <ErudaProvider>
+        {children}
+      </ErudaProvider>
+    </MiniKitProvider>
   );
 }
