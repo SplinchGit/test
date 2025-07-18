@@ -2,7 +2,7 @@
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
 import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import { useState } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useGameStore } from '../../store/gameStore';
 
 /**
  * This component is an example of how to use World ID in Mini Apps

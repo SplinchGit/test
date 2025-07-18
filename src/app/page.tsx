@@ -1,5 +1,5 @@
 import { Page } from '@/components/PageLayout';
-import { Verify } from '@/components/Verify';
+import { AuthButton } from '@/components/AuthButton';
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
           <h1 className="text-3xl font-bold text-red-500 mb-2">🎭 MAFIOSO</h1>
           <p className="text-gray-400">Verify your identity to enter the underworld</p>
         </div>
-        <Verify />
+        <AuthButton />
       </Page.Main>
     </Page>
   );

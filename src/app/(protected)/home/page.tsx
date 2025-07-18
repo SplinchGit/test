@@ -1,7 +1,6 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
 import { UserInfo } from '@/components/UserInfo';
-import { Verify } from '@/components/Verify';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import Link from 'next/link';
 
@@ -33,7 +32,6 @@ export default async function Home() {
           </Link>
         </div>
         <UserInfo />
-        <Verify />
       </Page.Main>
     </>
   );
