@@ -4,23 +4,13 @@ import { ReactNode, useEffect } from 'react';
 
 const ErudaProvider = (props: { children: ReactNode }) => {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        // Just fucking show Eruda always when in World App or dev
-        const isWorldApp = 
-          window.navigator.userAgent.includes('WorldApp') ||
-          window.location.href.includes('miniapp') ||
-          process.env.NODE_ENV === 'development';
-        
-        if (isWorldApp) {
-          import('eruda').then((eruda) => {
-            eruda.default.init();
-          });
-        }
-      } catch (error) {
-        console.log('Eruda failed to initialize', error);
-      }
-    }
+    // Just show Eruda. Period.
+    import('eruda').then((eruda) => {
+      eruda.default.init();
+      console.log('Eruda initialized - check for the floating button!');
+    }).catch(error => {
+      console.error('Eruda failed to load:', error);
+    });
   }, []);
 
   return <>{props.children}</>;
