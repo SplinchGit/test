@@ -1,6 +1,6 @@
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
-const fs = require('fs');
-const path = require('path');
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import fs from 'fs';
+import path from 'path';
 
 async function loadSecrets() {
   // Skip in local development
