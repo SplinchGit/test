@@ -37,7 +37,7 @@ export const AuthButton = () => {
     try {
       // 1. Call MiniKit verification
       const result = await MiniKit.commandsAsync.verify({
-        action: 'testAction',
+        action: 'testaction',
         verification_level: VerificationLevel.Device,
       });
       
@@ -67,7 +67,7 @@ export const AuthButton = () => {
         },
         body: JSON.stringify({
           payload: result.finalPayload,
-          action: 'testAction',
+          action: 'testaction',
         }),
       });
 
