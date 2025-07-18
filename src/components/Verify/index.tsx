@@ -2,7 +2,7 @@
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
 import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useGameStore } from '@/store/gameStore';
 
 /**
  * This component is an example of how to use World ID in Mini Apps
@@ -14,6 +14,7 @@ export const Verify = () => {
   const [buttonState, setButtonState] = useState<
     'pending' | 'success' | 'failed' | undefined
   >(undefined);
+  const { setPlayer } = useGameStore();
 
   const onClickVerify = async () => {
     setButtonState('pending');
@@ -35,13 +36,35 @@ export const Verify = () => {
     if (data.verifyRes.success) {
       setButtonState('success');
       
-      // Sign in with NextAuth using the nullifier hash
-      await signIn('credentials', {
-        nullifierHash: data.verifyRes.nullifier_hash,
-        redirectTo: '/dashboard',
+      // Store verification data in localStorage
+      localStorage.setItem('worldid_verified', 'true');
+      localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+      
+      // Check if user has existing game account
+      const accountResponse = await fetch('/api/game/check-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nullifierHash: data.verifyRes.nullifier_hash
+        })
       });
+      
+      const accountData = await accountResponse.json();
+      
+      if (accountData.hasAccount && accountData.player) {
+        // User has existing account, load player data and go to dashboard
+        setPlayer(accountData.player);
+        localStorage.setItem('auth_token', accountData.token);
+        window.location.href = '/dashboard';
+      } else {
+        // User needs to create account, redirect to game-setup
+        window.location.href = '/game-setup';
+      }
     } else {
       setButtonState('failed');
+      console.error('Verification failed:', data.verifyRes);
 
       // Reset the button state after 3 seconds
       setTimeout(() => {
