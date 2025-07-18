@@ -1,42 +1,40 @@
 'use client';
-import { MiniKitProvider } from '@worldcoin/minikit-js/minikit-provider';
+
+import eruda from 'eruda';
+import { ReactNode, useEffect } from 'react';
 import { Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
-import dynamic from 'next/dynamic';
-import type { ReactNode } from 'react';
 
-const ErudaProvider = dynamic(
-  () => import('@/providers/Eruda').then((c) => c.ErudaProvider),
-  { ssr: false },
-);
+const ErudaProvider = (props: { children: ReactNode }) => {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        // Just fucking show Eruda always when in World App or dev
+        const isWorldApp = 
+          window.navigator.userAgent.includes('WorldApp') ||
+          window.location.href.includes('miniapp') ||
+          process.env.NODE_ENV === 'development';
+        
+        if (isWorldApp) {
+          eruda.init();
+        }
+      } catch (error) {
+        console.log('Eruda failed to initialize', error);
+      }
+    }
+  }, []);
 
-// Define props for ClientProviders
+  return <>{props.children}</>;
+};
+
 interface ClientProvidersProps {
   children: ReactNode;
-  session: Session | null; // Use the appropriate type for session from next-auth
+  session: Session | null;
 }
 
-/**
- * ClientProvider wraps the app with essential context providers.
- *
- * - ErudaProvider:
- *     - Should be used only in development.
- *     - Enables an in-browser console for logging and debugging.
- *
- * - MiniKitProvider:
- *     - Required for MiniKit functionality.
- *
- * This component ensures both providers are available to all child components.
- */
-export default function ClientProviders({
-  children,
-  session,
-}: ClientProvidersProps) {
+export default function ClientProviders({ children, session }: ClientProvidersProps) {
   return (
     <ErudaProvider>
-      <MiniKitProvider>
-        <SessionProvider session={session}>{children}</SessionProvider>
-      </MiniKitProvider>
+      {children}
     </ErudaProvider>
   );
 }
