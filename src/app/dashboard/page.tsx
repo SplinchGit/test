@@ -1,7 +1,6 @@
-// Update the import path if the file is located elsewhere, for example:
+'use client';
+
 import { useGameStore } from '../../store/gameStore';
-// Or, if the file is named differently, update the filename accordingly.
-// import { useGameStore } from '../../store/useGameStore';
 import { CITIES, RANKS, CARS } from '@/types/constants';
 
 const Dashboard = () => {
