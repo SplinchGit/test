@@ -31,6 +31,7 @@ interface GameStore extends GameState {
   isInHospital: () => boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const storeCreator = (set: any, get: any): GameStore => ({
   // Initial state
   player: null,
@@ -146,7 +147,7 @@ const storeCreator = (set: any, get: any): GameStore => ({
     return player ? RANKS[player.rank].name : 'Unknown';
   },
 
-  canCommitCrime: (crimeId: number) => {
+  canCommitCrime: () => {
     const { player } = get();
     if (!player) return false;
     return !get().isInJail() && !get().isInHospital();
@@ -179,23 +180,23 @@ const storeCreator = (set: any, get: any): GameStore => ({
   },
 
   // Add missing methods with default implementations
-  buyCar: async (carId: number) => {
+  buyCar: async () => {
     set({ error: "Not implemented" });
     return false;
   },
-  buyGun: async (gunId: number) => {
+  buyGun: async () => {
     set({ error: "Not implemented" });
     return false;
   },
-  buyProtection: async (protectionId: number) => {
+  buyProtection: async () => {
     set({ error: "Not implemented" });
     return false;
   },
-  swissBank: async (action: 'deposit' | 'withdraw', amount: number) => {
+  swissBank: async () => {
     set({ error: "Not implemented" });
     return false;
   },
-  searchPlayer: async (targetUsername: string) => {
+  searchPlayer: async () => {
     set({ error: "Not implemented" });
     return false;
   },

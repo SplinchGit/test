@@ -37,8 +37,10 @@ export const Verify = () => {
       setButtonState('success');
       
       // Store verification data in localStorage
-      localStorage.setItem('worldid_verified', 'true');
-      localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('worldid_verified', 'true');
+        localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+      }
       
       // Check if user has existing game account
       const accountResponse = await fetch('/api/game/check-account', {
@@ -56,7 +58,9 @@ export const Verify = () => {
       if (accountData.hasAccount && accountData.player) {
         // User has existing account, load player data and go to dashboard
         setPlayer(accountData.player);
-        localStorage.setItem('auth_token', accountData.token);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_token', accountData.token);
+        }
         window.location.href = '/dashboard';
       } else {
         // User needs to create account, redirect to game-setup

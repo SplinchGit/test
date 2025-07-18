@@ -29,7 +29,9 @@ const GameNavigation = () => {
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('auth_token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+    }
   };
 
   return (

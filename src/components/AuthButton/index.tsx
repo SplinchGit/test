@@ -12,8 +12,8 @@ export const AuthButton = () => {
 
   // Check if already verified on component mount
   useEffect(() => {
-    const isVerified = localStorage.getItem('worldid_verified');
-    const nullifierHash = localStorage.getItem('worldid_nullifier');
+    const isVerified = typeof window !== 'undefined' ? localStorage.getItem('worldid_verified') : null;
+    const nullifierHash = typeof window !== 'undefined' ? localStorage.getItem('worldid_nullifier') : null;
     
     if (isVerified === 'true' && nullifierHash) {
       // Already verified, redirect to dashboard
@@ -83,8 +83,10 @@ export const AuthButton = () => {
       
       if (data.verifyRes && data.verifyRes.success) {
         // 5. Store verification status
-        localStorage.setItem('worldid_verified', 'true');
-        localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('worldid_verified', 'true');
+          localStorage.setItem('worldid_nullifier', data.verifyRes.nullifier_hash);
+        }
         
         // 6. Show success state briefly
         setVerificationState('success');

@@ -17,8 +17,8 @@ export default function GameSetup() {
   useEffect(() => {
     const initializeGame = async () => {
       // Check if user has verified with WorldID
-      const isVerified = localStorage.getItem('worldid_verified');
-      const storedNullifier = localStorage.getItem('worldid_nullifier');
+      const isVerified = typeof window !== 'undefined' ? localStorage.getItem('worldid_verified') : null;
+      const storedNullifier = typeof window !== 'undefined' ? localStorage.getItem('worldid_nullifier') : null;
       
       if (!isVerified || !storedNullifier) {
         router.push('/');
@@ -47,7 +47,9 @@ export default function GameSetup() {
 
         if (data.hasAccount) {
           // User has existing account, store auth token and go to game
-          localStorage.setItem('auth_token', data.token);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('auth_token', data.token);
+          }
           setPlayer(data.player);
           router.push('/dashboard');
         } else {
@@ -67,7 +69,9 @@ export default function GameSetup() {
 
   const handleUsernameSelected = (player: Player, token: string) => {
     // Store auth token and player data
-    localStorage.setItem('auth_token', token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', token);
+    }
     setPlayer(player);
     
     // Redirect to game
@@ -76,8 +80,10 @@ export default function GameSetup() {
 
   const handleBack = () => {
     // Clear WorldID verification status
-    localStorage.removeItem('worldid_verified');
-    localStorage.removeItem('worldid_nullifier');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('worldid_verified');
+      localStorage.removeItem('worldid_nullifier');
+    }
     router.push('/');
   };
 
